@@ -5,6 +5,7 @@ A hybrid MT evaluation framework for Hindi that combines rule-based checks, cont
 ## Abstract
 
 Automatic evaluation metrics for Machine Translation (MT) often rely on surface-level similarity and can fail to capture semantic adequacy--particularly for phenomena such as negation, antonymy, and paraphrase variation. Although some meta-evaluation studies have been done with European languages but their approaches may not always be suitable for Indian languages. In this paper, we introduce a principled multi-step framework that refines MT evaluation by sequentially applying rule-based checks, contradiction detection, and paraphrase analysis, with a focus on Hindi language. Our method comprises explicit categories like Multidimensional Quality Metrics (MQM) error typology using linguistic rules, detects implicit semantic opposition through contradiction-specific embedding, and estimates paraphrase likelihood via dual sentence encoders with CNN, and a set of shallow lexical features to estimate paraphrase likelihood. The outputs of these components are used to adjust existing metric scores and nudge them toward more faithful judgments. We experimented with 14,214 Hindi samples combined across four datasets. The framework consistently improves six standard metrics (COMET, BERTScore, BLEURT, BLEU, ChrF, ChrF++), demonstrating strong performance across 17 fine-grained translation categories. We hope that our analysis will facilitate further research on Indic MT evaluation.
+
 ---
 
 ## Overview
