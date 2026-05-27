@@ -12,9 +12,9 @@ Automatic evaluation metrics for Machine Translation (MT) often rely on surface-
 
 Standard MT metrics fail to reliably capture semantic errors like negation flips, antonym substitutions, and paraphrase variations. This framework applies three sequential modules on top of existing metric scores:
 
-1. **Rule-Based Module** — detects negation/antonym flips with explicit Hindi linguistic rules  
-2. **Contradiction Detection** — CWE-based CNN that identifies semantic polarity reversals  
-3. **Paraphrase Detection** — Siamese SBERT + CNN that identifies meaning-preserving variations  
+1. **Rule-Based Module** — detects negation/antonym flips with explicit Hindi linguistic rules 
+2. **Contradiction Detection** — CWE-based CNN that identifies semantic polarity reversals 
+3. **Paraphrase Detection** — Siamese SBERT + CNN that identifies meaning-preserving variations 
 
 A unified **Score Adjustment Layer** then nudges existing metric scores toward more faithful judgements.
 
@@ -63,7 +63,7 @@ mt_eval_hindi/
 │   ├── train_contradiction.py      # Train the contradiction detection model
 │   └── train_paraphrase.py         # Train the paraphrase detection model
 ├── run_evaluation.py               # Compute metrics + run full framework
-├── run_results.py                  # Reproduce paper tables (Tables 5-9)
+├── run_results.py                  # Produce results
 ├── configs.yaml                    # Hyperparameters and paths
 ├── requirements.txt
 └── README.md
@@ -92,7 +92,7 @@ Place the following files in `data/`:
 | `Trialset_All_Mixed_Hindi_Balanced.csv` | Validation split |
 | `Testset_All_Mixed_Hindi_Balanced.csv` | Test split (560 samples) |
 
-CSV columns: `src, ref, mt, model, category, label`  
+CSV columns: `src, ref, mt, model, category, label` 
 `label` ∈ `{P, NP}` — Paraphrase / Non-Paraphrase
 
 ## For the contradiction model:
@@ -143,7 +143,7 @@ python evaluate/run_evaluation.py \
   --output_csv   results/evaluated_testset.csv
 ```
 
-### Reproduce paper tables (Tables 5–9)
+### Produce results
 ```bash
 python scripts/run_results.py \
   --results_csv results/evaluated_testset.csv
@@ -155,24 +155,24 @@ python scripts/run_results.py \
 For a metric score `s ∈ [0,1]` and decision signal `d ∈ [0,1]` with threshold `τ = 0.6`:
 
 ```
-s' = τ + (τ − s)·d    if d ≥ 0.5 and s < τ   (reward: lift under-scored paraphrases)
-   = τ − (s − τ)·(1−d) if d < 0.5 and s > τ   (penalty: lower over-scored contradictions)
-   = s                  otherwise               (no change)
+s' = τ + (τ − s)·d    if d ≥ 0.5 and s < τ    (reward: lift under-scored paraphrases)
+   = τ − (s − τ)·(1−d) if d < 0.5 and s > τ   (penalty: reduce over-scored contradictions)
+   = s                  otherwise             (no change)
 s' = clip(s', 0, 1)
 ```
 
 ---
 
-## Fine-Grained Categories (17 total)
+## Fine-Grained 17 Categories; Group: **P** (similar), **NP** (dissimilar) 
 | Group | Category | Description |
 |-------|----------|-------------|
-| **P** (similar) | `Word_synm` | Synonym substitution |
+| **P** | `Word_synm` | Synonym substitution |
 | P | `Mixd_lang` | Mixed-language or script variation |
 | P | `Negt_anto` | Negation + antonym logical equivalence |
 | P | `Identical` | Exact or near-exact match |
 | P | `Fluent` | Fluent reformulation |
 | P | `Default_similar` | Other meaning-preserving variation |
-| **NP** (dissimilar) | `Anto_flip` | Antonym substitution flips meaning |
+| **NP** | `Anto_flip` | Antonym substitution flips meaning |
 | NP | `Negt_flip` | Negation added/removed flips polarity |
 | NP | `Gend_flip` | Wrong gender agreement |
 | NP | `Sing_plul` | Number agreement error |
