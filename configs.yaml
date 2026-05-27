@@ -1,0 +1,53 @@
+# ─────────────────────────────────────────────
+#  Default configuration for mt_eval_hindi
+# ─────────────────────────────────────────────
+
+# ── Data paths ──────────────────────────────
+data:
+  train_csv:  data/Trainset_All_Mixed_Hindi_Balanced.csv
+  trial_csv:  data/Trialset_All_Mixed_Hindi_Balanced.csv
+  test_csv:   data/Testset_All_Mixed_Hindi_Balanced.csv
+
+# ── Model paths ─────────────────────────────
+models:
+  word2idx:        models/hindi_cwe_word2idx300d.pkl
+  cwe_emb:         models/hindi_cwe_finetuned_emb_300d.pt
+  contra_model:    models/contra_detect_best.pt
+  para_model:      models/para_detect_best.pth
+  sbert_backbone:  sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+  comet_model:     Unbabel/wmt22-comet-da
+  bleurt_model:    Elron/bleurt-large-512
+
+# ── Framework ───────────────────────────────
+framework:
+  tau: 0.6          # score adjustment threshold
+  max_len: 70       # max token length for CWE encoding
+  sbert_max_len: 64 # max token length for SBERT
+
+# ── Contradiction Detection Training ────────
+contra_train:
+  epochs: 20
+  batch_size: 128
+  lr: 1.0e-4
+  patience: 3
+  emb_dim: 300
+  conv_out: 500
+  dropout: 0.3
+  hidden_sizes: [256, 128]
+
+# ── Paraphrase Detection Training ───────────
+para_train:
+  epochs: 15
+  batch_size: 64
+  lr: 5.0e-5
+  bert_unfreeze_epoch: 5
+  bert_lr: 1.0e-5
+  num_filters: 100
+  kernel_sizes: [3, 4, 5]
+  dropout: 0.2
+  hidden_sizes: [512, 128]
+
+# ── Evaluation ──────────────────────────────
+evaluate:
+  output_dir: results/
+  batch_size: 16
