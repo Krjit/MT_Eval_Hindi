@@ -74,8 +74,8 @@ mt_eval_hindi/
 ## Setup
 
 ```bash
-git clone <repo>
-cd mt_eval_hindi
+git clone https://github.com/Krjit/MT_Eval_Hindi.git
+cd MT_Eval_Hindi
 pip install -r requirements.txt
 python -m nltk.downloader punkt punkt_tab
 ```
