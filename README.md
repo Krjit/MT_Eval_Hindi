@@ -88,8 +88,8 @@ Place the following files in `data/`:
 
 | File | Description |
 |------|-------------|
-| `Trainset_All_Mixed_Hindi_Balanced.csv` | Training split (13,654 samples) |
-| `Trialset_All_Mixed_Hindi_Balanced.csv` | Validation split |
+| `Trainset_All_Mixed_Hindi_Balanced.csv` | Training split (12,971 samples) |
+| `Trialset_All_Mixed_Hindi_Balanced.csv` | Validation split (683 samples) |
 | `Testset_All_Mixed_Hindi_Balanced.csv` | Test split (560 samples) |
 
 CSV columns: `src, ref, mt, model, category, label` 
