@@ -95,13 +95,14 @@ Place the following files in `data/`:
 CSV columns: `src, ref, mt, model, category, label` 
 `label` ∈ `{P, NP}` — Paraphrase / Non-Paraphrase
 
-## For the contradiction model:
+## For Contradiction Detection model:
 1. Download the [ParaNMT-50M dataset](https://drive.google.com/file/d/1rbF3daJjCsa1-fu2GANeJd2FBXos1ugD/view?usp=sharing)
 2. Use cwe_hindi/build_cwe_corpus.py to make the cwe paraphrase and contradiction corpus
 3. Translate the above generated corpus to hindi using the trans_to_cwe_....py files
-4. Make cwe vocab and emb mat ckpt using the file cwe_hindi/cwe_setup.py
+4. Make the cwe vocab and emb matrix ckpt files using the cwe_hindi/cwe_setup.py file
     - `hindi_cwe_word2idx300d.pkl` — CWE vocabulary (word→index map)
     - `hindi_cwe_finetuned_emb_300d.pt` — Pre-trained CWE embedding matrix (vocab×300)
+    
     And Place both under `models/`.
 
 ---
