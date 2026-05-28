@@ -6,6 +6,10 @@ build/
 *.pt
 *.pth
 *.log
+*.yaml
+run_results.py
+single_inference.py
+threshold_valid.py 
 results/
 .DS_Store
 .vscode/
