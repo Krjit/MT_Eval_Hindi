@@ -1,5 +1,5 @@
 """
-evaluate/run_evaluation.py
+run_evaluation.py
 ───────────────────────────
 Compute raw MT evaluation metrics (COMET, BERTScore, BLEURT, BLEU, ChrF, ChrF++)
 for all samples in the test set, then run the full adjustment framework.
@@ -7,7 +7,7 @@ for all samples in the test set, then run the full adjustment framework.
 Outputs a CSV with original and adjusted scores for every metric.
 
 Usage:
-    python evaluate/run_evaluation.py \
+    python run_evaluation.py \
         --test_csv     data/Testset_All_Mixed_Hindi_Balanced.csv \
         --contra_model models/contra_detect_best.pt \
         --word2idx     models/hindi_cwe_word2idx300d.pkl \
