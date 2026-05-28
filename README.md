@@ -19,65 +19,91 @@ Standard MT metrics fail to reliably capture semantic errors like negation flips
 A unified **Score Adjustment Layer** then nudges existing metric scores toward more faithful judgements.
 
 ```
-Source + Reference + MT + Metric Score
-           │
-    ┌──────▼───────┐
-    │ Rule-Based   │ ──► d_rule ∈ {0, 1, None}
-    └──────┬───────┘
-           │ None (not resolved)
-    ┌──────▼───────────┐
-    │ Contradiction     │ ──► d_contra ∈ [0,1]
-    │ Detection (CWE)   │
-    └──────┬────────────┘
-           │ Non-contradiction
-    ┌──────▼───────────┐
-    │ Paraphrase        │ ──► d_para ∈ [0,1]
-    │ Detection (SBERT) │
-    └──────┬────────────┘
-           │
-    ┌──────▼──────────────┐
-    │ Score Adjustment    │ ──► s' (adjusted score)
-    └─────────────────────┘
+Source + Reference + Translation + Metric Score (s ∈ [0,1])
+           |
+   --------V--------- 
+   |   Rule-Based   │   --> d_rule ∈ {0, 1, None}
+   ------------------
+           | None (not resolved)
+   --------V----------
+   |  Contradiction  |  --> d_contra ∈ [0,1]
+   |    Detection    |
+   -------------------
+           | Non-contradiction (d_contra > 0.5)
+   --------V---------
+   |   Paraphrase   |   --> d_para ∈ [0,1]
+   |    Detection   |
+   ------------------
+           |
+   --------V-----------
+   | Score Adjustment | --> s' ∈ [0,1]
+   --------------------
 ```
+
+---
+
+## Score Adjustment Formula
+For a metric score `s ∈ [0,1]` and decision signal `d ∈ [0,1]` with threshold `τ`:
+
+```
+s' = τ + (τ − s)·d      if d ≥ 0.5 and s < τ  (reward: lift under-scored paraphrases)
+   = τ − (s − τ)·(1−d)  if d < 0.5 and s > τ  (penalty: reduce over-scored contradictions)
+   = s                  otherwise             (no change)
+s' = clip(s', 0, 1)
+```
+
+---
+
+## Fine-Grained 17 Categories 
+| Group | Category | Description |
+|-------|----------|-------------|
+| Similar |
+| P | `Word_synm` | Synonym substitution |
+| P | `Mixd_lang` | Mixed-language or script variation |
+| P | `Negt_anto` | Negation + antonym logical equivalence |
+| P | `Identical` | Exact or near-exact match |
+| P | `Fluent` | Fluent reformulation |
+| P | `Default_similar` | Other meaning-preserving variation |
+| Dissimilar |
+| NP | `Anto_flip` | Antonym substitution flips meaning |
+| NP | `Negt_flip` | Negation added/removed flips polarity |
+| NP | `Gend_flip` | Wrong gender agreement |
+| NP | `Sing_plul` | Number agreement error |
+| NP | `Tens_chng` | Tense inconsistency |
+| NP | `Word_ordr` | Disruptive word-order change |
+| NP | `Word_rplc` | Wrong word/named-entity replacement |
+| NP | `Add_extra` | Extra information added |
+| NP | `Omission` | Key information omitted |
+| NP | `Neutral` | Content does not align at all |
+| NP | `Default_dissimilar` | Other meaning-altering variation |
 
 ---
 
 ## Project Structure
 
 ```
-mt_eval_hindi/
-├── cwe_hindi/
-│   ├── build_cwe_corpus.py         # Build paraphrase & contradiction pairs .txt files for CWE
-│   ├── trans_to_cwe_contra_hi.py   # Translate the cwe contradiction pairs to hindi
-│   ├── trans_to_cwe_para_hi.py     # Translate the cwe paraphrase pairs to hindi
-│   └── cwe_setup.py                # First step to setup the CWE with vocub and emb-matrix checkpoint
-├── data/                           # CSV data files 
-├── models/                         # Saved model checkpoints
-├── src/
-│   ├── rule_based.py               # Negation & antonym rule detector
-│   ├── contradiction_detection.py  # CWE-based CNN model + data utils
-│   ├── paraphrase_detection.py     # Siamese SBERT+CNN model + data utils
-│   ├── score_adjustment.py         # Score adjustment formula
-│   └── framework.py                # Full pipeline orchestrator
-├── train/
-│   ├── train_contradiction.py      # Train the contradiction detection model
-│   └── train_paraphrase.py         # Train the paraphrase detection model
-├── run_evaluation.py               # Compute metrics + run full framework
-├── run_results.py                  # Produce results
-├── configs.yaml                    # Hyperparameters and paths
-├── requirements.txt
-└── README.md
-```
-
----
-
-## Setup
-
-```bash
-git clone https://github.com/Krjit/MT_Eval_Hindi.git
-cd MT_Eval_Hindi
-pip install -r requirements.txt
-python -m nltk.downloader punkt punkt_tab
+MT_Eval_Hindi/
+|-- cwe_hindi/
+|   |-- build_cwe_corpus.py         # Build paraphrase & contradiction pairs .txt files for CWE
+|   |-- trans_to_cwe_contra_hi.py   # Translate the cwe contradiction pairs to hindi
+|   |-- trans_to_cwe_para_hi.py     # Translate the cwe paraphrase pairs to hindi
+|   |-- cwe_setup.py                # First step to setup the CWE with vocub and emb-matrix checkpoint
+|-- data/                           # CSV data files 
+|-- models/                         # Saved model checkpoints
+|-- src/
+|   |-- rule_based.py               # Negation & antonym rule detector
+|   |-- contradiction_detection.py  # CWE-based CNN model + data utils
+|   |-- paraphrase_detection.py     # Siamese SBERT+CNN model + data utils
+|   |-- score_adjustment.py         # Score adjustment formula
+|   |-- framework.py                # Full pipeline orchestrator
+|-- train/
+|   |-- train_contradiction.py      # Train the contradiction detection model
+|   |-- train_paraphrase.py         # Train the paraphrase detection model
+|-- run_evaluation.py               # Compute metrics + run full framework
+|-- run_results.py                  # Produce results
+|-- configs.yaml                    # Hyperparameters and paths
+|-- requirements.txt
+|-- README.md
 ```
 
 ---
@@ -92,8 +118,20 @@ Place the following files in `data/`:
 | `Trialset_All_Mixed_Hindi_Balanced.csv` | Validation split (683 samples) |
 | `Testset_All_Mixed_Hindi_Balanced.csv` | Test split (560 samples) |
 
-CSV columns: `src, ref, mt, model, category, label` 
-`label` ∈ `{P, NP}` — Paraphrase / Non-Paraphrase
+CSV columns: `src, ref, mt, model, category, label` (`Group` ∈ `{P, NP}` — Paraphrase / Non-Paraphrase) 
+
+---
+
+## Setup
+
+```bash
+git clone https://github.com/Krjit/MT_Eval_Hindi.git
+cd MT_Eval_Hindi
+pip install -r requirements.txt
+python -m nltk.downloader punkt punkt_tab
+```
+
+---
 
 ## For Contradiction Detection model:
 1. Download the [ParaNMT-50M dataset](https://drive.google.com/file/d/1rbF3daJjCsa1-fu2GANeJd2FBXos1ugD/view?usp=sharing)
@@ -149,40 +187,5 @@ python evaluate/run_evaluation.py \
 python scripts/run_results.py \
   --results_csv results/evaluated_testset.csv
 ```
-
----
-
-## Score Adjustment Formula
-For a metric score `s ∈ [0,1]` and decision signal `d ∈ [0,1]` with threshold `τ = 0.6`:
-
-```
-s' = τ + (τ − s)·d    if d ≥ 0.5 and s < τ    (reward: lift under-scored paraphrases)
-   = τ − (s − τ)·(1−d) if d < 0.5 and s > τ   (penalty: reduce over-scored contradictions)
-   = s                  otherwise             (no change)
-s' = clip(s', 0, 1)
-```
-
----
-
-## Fine-Grained 17 Categories; Group: **P** (similar), **NP** (dissimilar) 
-| Group | Category | Description |
-|-------|----------|-------------|
-| **P** | `Word_synm` | Synonym substitution |
-| P | `Mixd_lang` | Mixed-language or script variation |
-| P | `Negt_anto` | Negation + antonym logical equivalence |
-| P | `Identical` | Exact or near-exact match |
-| P | `Fluent` | Fluent reformulation |
-| P | `Default_similar` | Other meaning-preserving variation |
-| **NP** | `Anto_flip` | Antonym substitution flips meaning |
-| NP | `Negt_flip` | Negation added/removed flips polarity |
-| NP | `Gend_flip` | Wrong gender agreement |
-| NP | `Sing_plul` | Number agreement error |
-| NP | `Tens_chng` | Tense inconsistency |
-| NP | `Word_ordr` | Disruptive word-order change |
-| NP | `Word_rplc` | Wrong word/named-entity replacement |
-| NP | `Add_extra` | Extra information added |
-| NP | `Omission` | Key information omitted |
-| NP | `Neutral` | Content does not align at all |
-| NP | `Default_dissimilar` | Other meaning-altering variation |
 
 ---
