@@ -4,7 +4,7 @@ run_evaluation.py
 Compute raw MT evaluation metrics (COMET, BERTScore, BLEURT, BLEU, ChrF, ChrF++)
 for all samples in the test set, then run the full adjustment framework.
 
-Outputs a CSV with original and adjusted scores for every metric.
+Outputs a CSV with original and adjusted scores for every metric. 
 
 Usage:
     python run_evaluation.py \
