@@ -99,8 +99,11 @@ MT_Eval_Hindi/
 |-- train/
 |   |-- train_contradiction.py      # Train the contradiction detection model
 |   |-- train_paraphrase.py         # Train the paraphrase detection model
+|-- results/                        # Saved evaluated resultset
 |-- run_evaluation.py               # Compute metrics + run full framework
 |-- run_results.py                  # Produce results
+|-- single_inference.py             # Find original and adjusted metric scores for an input sample
+|-- threshold_valid.py              # Threshold validation with the values [0.5, 0.6, 0.7] 
 |-- configs.yaml                    # Hyperparameters and paths
 |-- requirements.txt
 |-- README.md
