@@ -19,7 +19,7 @@ Standard MT metrics fail to reliably capture semantic errors like negation flips
 A unified **Score Adjustment Layer** then nudges existing metric scores toward more faithful judgements.
 
 ```
-Source + Reference + Translation + Metric Score (s ∈ [0,1])
+Reference + Translation + Metric Score (s ∈ [0,1])
            |
    --------V--------- 
    |   Rule-Based   │   --> d_rule ∈ {0, 1, None}
@@ -137,7 +137,7 @@ python -m nltk.downloader punkt punkt_tab
 ---
 
 ## For Contradiction Detection model:
-1. Download the [ParaNMT-50M dataset](https://drive.google.com/file/d/1rbF3daJjCsa1-fu2GANeJd2FBXos1ugD/view?usp=sharing)
+1. Download the [ParaNMT-50M dataset](https://drive.google.com/file/d/1rbF3daJjCsa1-fu2GANeJd2FBXos1ugD/view?usp=sharing) [[Paper](https://aclanthology.org/P18-1042/)]
 2. Use cwe_hindi/build_cwe_corpus.py to make the cwe paraphrase and contradiction corpus
 3. Translate the above generated corpus to hindi using the trans_to_cwe_....py files
 4. Make the cwe vocab and emb matrix ckpt files using the cwe_hindi/cwe_setup.py file
@@ -172,23 +172,17 @@ python train/train_paraphrase.py \
 
 ---
 
-## Evaluation & Results
+## Evaluation
 
 ### Run full framework evaluation
 ```bash
-python evaluate/run_evaluation.py \
+python run_evaluation.py \
   --test_csv  data/Testset_All_Mixed_Hindi_Balanced.csv \
   --contra_model models/contra_detect_best.pt \
   --word2idx     models/hindi_cwe_word2idx300d.pkl \
   --cwe_emb      models/hindi_cwe_finetuned_emb_300d.pt \
   --para_model   models/para_detect_best.pth \
   --output_csv   results/evaluated_testset.csv
-```
-
-### Produce results
-```bash
-python scripts/run_results.py \
-  --results_csv results/evaluated_testset.csv
 ```
 
 ---
