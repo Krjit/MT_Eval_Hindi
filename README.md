@@ -12,7 +12,7 @@ Automatic evaluation metrics for Machine Translation (MT) often rely on surface-
 
 Standard MT metrics fail to reliably capture semantic errors like negation flips, antonym substitutions, and paraphrase variations. This framework applies three sequential modules on top of existing metric scores:
 
-1. **Rule-Based Module** — detects negation/antonym flips with explicit Hindi linguistic rules 
+1. **Rule-Based Approach** — detects negation/antonym flips with explicit Hindi linguistic rules 
 2. **Contradiction Detection** — CWE-based CNN that identifies semantic polarity reversals 
 3. **Paraphrase Detection** — Siamese SBERT + CNN that identifies meaning-preserving variations 
 
