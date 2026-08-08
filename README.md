@@ -89,7 +89,7 @@ MT_Eval_Hindi/
 |   |-- trans_to_cwe_para_hi.py     # Translate the cwe paraphrase pairs to hindi
 |   |-- cwe_setup.py                # First step to setup the CWE with vocub and emb-matrix checkpoint
 |-- data/                           # CSV data files 
-|-- indic_comet                     # IndicCOMET model training and results
+|-- indic_comet/                    # IndicCOMET training and evaluation
 |-- models/                         # Saved model checkpoints
 |-- src/
 |   |-- rule_based.py               # Negation & antonym rule detector
