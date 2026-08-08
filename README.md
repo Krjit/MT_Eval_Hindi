@@ -89,6 +89,7 @@ MT_Eval_Hindi/
 |   |-- trans_to_cwe_para_hi.py     # Translate the cwe paraphrase pairs to hindi
 |   |-- cwe_setup.py                # First step to setup the CWE with vocub and emb-matrix checkpoint
 |-- data/                           # CSV data files 
+|-- indic_comet                     # IndicCOMET model training and results
 |-- models/                         # Saved model checkpoints
 |-- src/
 |   |-- rule_based.py               # Negation & antonym rule detector
@@ -104,7 +105,7 @@ MT_Eval_Hindi/
 |-- run_results.py                  # Produce results 
 |-- single_inference.py             # Find original and adjusted metric scores for an input sample
 |-- threshold_valid.py              # Threshold validation with the values [0.5, 0.6, 0.7] 
-|-- configs.yaml                    # Hyperparameters and paths
+|-- human_eval_correlations.py      # Human eval correlations for the separate test samples
 |-- requirements.txt
 |-- README.md
 ```
